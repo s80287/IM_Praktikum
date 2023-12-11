@@ -1,4 +1,3 @@
-package de.htwdd;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -13,14 +12,14 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 
 public class SimpleMQTT5Publisher {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		// build blocking client
-		Mqtt5BlockingClient  client = Mqtt5Client.builder().identifier(UUID.randomUUID().toString()).serverHost("broker.hivemq.com").buildBlocking();
+		Mqtt5BlockingClient  client = Mqtt5Client.builder().identifier(UUID.randomUUID().toString()).serverHost("141.56.180.177").serverPort(1883).buildBlocking();
 		
 		// connect blocking client
 		Mqtt5ConnAck connAckMessage = client.connectWith().keepAlive(10).cleanStart(true).willPublish()
-	            .topic("htwdd/informatik/wise2223/im/sXXXXX/dead")
+	            .topic("htwdd/informatik/wi/wise2324/im/s80287/dead")
 	            .qos(MqttQos.AT_LEAST_ONCE)
 	            .payload("I passed away.. :-(".getBytes())
 	            .retain(true)
@@ -29,7 +28,7 @@ public class SimpleMQTT5Publisher {
 	            .payloadFormatIndicator(Mqtt5PayloadFormatIndicator.UTF_8)
 	            .contentType("text/plain")
 	            .userProperties()
-	                .add("sNummer", "sXXXXX")
+	                .add("sNummer", "s80287")
 	                .applyUserProperties()
 	            .applyWillPublish().
 	
@@ -39,18 +38,45 @@ public class SimpleMQTT5Publisher {
 		
 		
 		// publish a message
-		Mqtt5PublishResult publishResult = client.publishWith().topic("htwdd/informatik/wise2223/im/sXXXXX")
+		/*
+		Mqtt5PublishResult publishResult = client.publishWith().topic("htwdd/informatik/wi/wise2324/im/s80287")
 				.qos(MqttQos.AT_LEAST_ONCE)
 				.retain(false)
 				.payload("Hello MQTT5".getBytes())
 				.userProperties()
-				.add("name", "sXXXXX")
+				.add("name", "s80287")
 				.applyUserProperties()
 				.correlationData("myCorrDataID".getBytes())
-				.responseTopic("htwdd/informatik/wise2223/im/sXXXXX/returnTopic")
+				.responseTopic("htwdd/informatik/wi/wise2324/im/s80287/returnTopic")
 				.send();
+				
+				System.out.println("Message sent: " + publishResult);
+		*/
 		
-		System.out.println("Message sent: " + publishResult);
+		// Task 7: send 10 messages at a time, after 1 second each
+		int i = 1, maxIndex = 10;
+		
+		for (i = 1; i <= maxIndex; i++) {
+			String message = "Message " + String.valueOf(i);
+			
+			// wait 1 second, 1000 ms
+			Thread.sleep(1000);
+			
+			Mqtt5PublishResult publishResult = client.publishWith().topic("htwdd/informatik/wi/wise2324/im/s80287")
+					.qos(MqttQos.AT_LEAST_ONCE)
+					.retain(false)
+					.payload(message.getBytes())
+					.userProperties()
+					.add("name", "s80287")
+					.applyUserProperties()
+					.correlationData("myCorrDataID".getBytes())
+					.responseTopic("htwdd/informatik/wi/wise2324/im/s80287/returnTopic")
+					.send();
+			
+			System.out.println("Message sent: " + publishResult);
+		}
+		
+		
 		
 		
 		// client dies and triggers LWT on broker
